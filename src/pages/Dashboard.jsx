@@ -320,14 +320,18 @@ export default function Dashboard() {
                       >
                         <Eye size={16} />
                       </button>
-                      <button
-                        className="icon-btn"
-                        onClick={() => handleEditRequisition(req)}
-                        title="Edit Requisition"
-                        style={{ color: "#f57c00" }}
-                      >
-                        <Edit size={16} />
-                      </button>
+                      
+                      {/* Only show Edit button if status is NOT ASSIGNED, ACCEPTED, COMPLETED, or CANCELLED */}
+                      {!["ASSIGNED", "ACCEPTED", "COMPLETED", "CANCELLED"].includes(req.status) && (
+                        <button
+                          className="icon-btn"
+                          onClick={() => handleEditRequisition(req)}
+                          title="Assign Requisition"
+                          style={{ color: "#f57c00" }}
+                        >
+                          <Edit size={16} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -625,7 +629,6 @@ function RequisitionModal({ requisition, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Same as before - keeping the view modal unchanged */}
         <div className="modal-header">
           <div>
             <h2 style={{ margin: 0 }}>{requisition.requisitionNo}</h2>
