@@ -6,12 +6,11 @@ import { getWarehouses } from "../api/warehouseApi";
 import "./DeviceForm.css";
 
 const DUMMY_DEVICE = {
-  imei: "string",
-  qr: "string",
+  imei: "123456789012345",
+  qr: "QR-DEV-001",
   locationType: "PRODUCTION_FLOOR",
-  locationProductionFloor: "string",
+  locationProductionFloor: "Floor A - Line 3",
   productionWarehouseId: "",
-  installationRequisitionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
 };
 
 const EMPTY_DEVICE = {
@@ -20,7 +19,6 @@ const EMPTY_DEVICE = {
   locationType: "PRODUCTION_FLOOR",
   locationProductionFloor: "",
   productionWarehouseId: "",
-  installationRequisitionId: "",
 };
 
 export default function AddDevice() {
@@ -104,7 +102,6 @@ export default function AddDevice() {
       locationType: device.locationType,
       locationProductionFloor: device.locationProductionFloor.trim(),
       productionWarehouseId: device.productionWarehouseId,
-      installationRequisitionId: device.installationRequisitionId || null,
     };
 
     const result = await createDevice(payload);
@@ -226,17 +223,6 @@ export default function AddDevice() {
                     ))}
                   </select>
                   {errors.productionWarehouseId && <span className="error">{errors.productionWarehouseId}</span>}
-                </label>
-
-                <label>
-                  Installation Requisition ID
-                  <input
-                    name="installationRequisitionId"
-                    value={device.installationRequisitionId}
-                    placeholder="Enter requisition ID (optional)"
-                    onChange={handleChange}
-                    disabled={loading}
-                  />
                 </label>
               </div>
             </section>
