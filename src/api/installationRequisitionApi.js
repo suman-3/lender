@@ -39,15 +39,35 @@ export const getInstallationRequisitionById = async (id) => {
   }
 };
 
+export const updateInstallationRequisition = async (id, payload) => {
+  try {
+    const response = await API.put(`/installationRequisition/update/${id}`, payload);
+    console.log("API Raw Response (Update Installation Requisition):", response.data);
+    
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message || "Installation requisition updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating installation requisition:", error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || "Failed to update installation requisition",
+    };
+  }
+};
+
 export const REQUISITION_STATUSES = {
   NEW: "NEW",
+  PENDING: "PENDING",
   ASSIGNED: "ASSIGNED",
+  ACCEPTED: "ACCEPTED",
   IN_PROGRESS: "IN_PROGRESS",
   COMPLETED: "COMPLETED",
-  VERIFIED: "VERIFIED",
-  CLOSED: "CLOSED",
   CANCELLED: "CANCELLED",
 };
+
 
 export const PRIORITY_LEVELS = {
   LOW: "LOW",
