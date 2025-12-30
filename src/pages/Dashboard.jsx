@@ -109,7 +109,8 @@ export default function Dashboard() {
           r.requisitionNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.vehicleNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.customerMobile?.toLowerCase().includes(searchTerm.toLowerCase())
+          r.customerMobile?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          r.branchId?.toString().toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -165,7 +166,7 @@ export default function Dashboard() {
       <div style={{ padding: "0 1.5rem", marginBottom: "1rem" }}>
         <input
           type="text"
-          placeholder="Search by requisition no, vehicle no, customer name, or mobile..."
+          placeholder="Search by requisition no, vehicle no, customer name, mobile, or branch ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -199,6 +200,7 @@ export default function Dashboard() {
           <thead>
             <tr>
               <th>Requisition No</th>
+              <th>Branch ID</th>
               <th>Vehicle No</th>
               <th>Customer Name</th>
               <th>Mobile</th>
@@ -207,6 +209,7 @@ export default function Dashboard() {
               <th>Requested At</th>
               <th>Preferred Date</th>
               <th>Status</th>
+              <th>Completed</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -214,7 +217,7 @@ export default function Dashboard() {
             {loading ? (
               [...Array(5)].map((_, index) => (
                 <tr key={index}>
-                  {[...Array(10)].map((_, colIndex) => (
+                  {[...Array(12)].map((_, colIndex) => (
                     <td key={colIndex}>
                       <div className="skeleton-line" />
                     </td>
@@ -223,7 +226,7 @@ export default function Dashboard() {
               ))
             ) : filteredRequisitions.length === 0 ? (
               <tr>
-                <td colSpan="10" style={{ textAlign: "center", padding: "2rem" }}>
+                <td colSpan="12" style={{ textAlign: "center", padding: "2rem" }}>
                   No requisitions found
                 </td>
               </tr>
@@ -233,6 +236,7 @@ export default function Dashboard() {
                   <td>
                     <strong>{req.requisitionNo}</strong>
                   </td>
+                  <td>{req.branchId || "N/A"}</td>
                   <td>{req.vehicleNo}</td>
                   <td>{req.customerName}</td>
                   <td>{req.customerMobile}</td>
@@ -261,6 +265,19 @@ export default function Dashboard() {
                       }}
                     >
                       {req.status}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      style={{
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        fontSize: "0.8rem",
+                        backgroundColor: req.completedAt != null ? "#e8f5e9" : "#ffebee",
+                        color: req.completedAt != null ? "#2e7d32" : "#c62828",
+                      }}
+                    >
+                      {req.completedAt != null ? "Yes" : "No"}
                     </span>
                   </td>
                   <td>
@@ -309,7 +326,7 @@ function RequisitionModal({ requisition, onClose }) {
           <div>
             <h2 style={{ margin: 0 }}>{requisition.requisitionNo}</h2>
             <p style={{ margin: "0.5rem 0 0 0", color: "#666", fontSize: "0.9rem" }}>
-              ID: {requisition.id}
+              ID: {requisition.id} | Branch ID: {requisition.branchId || "N/A"}
             </p>
           </div>
           <button className="modal-close" onClick={onClose}>
@@ -320,7 +337,7 @@ function RequisitionModal({ requisition, onClose }) {
         {/* CONTENT */}
         <div className="modal-body">
           {/* STATUS & PRIORITY */}
-          <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
             <span
               style={{
                 padding: "0.5rem 1rem",
@@ -343,12 +360,28 @@ function RequisitionModal({ requisition, onClose }) {
             >
               {requisition.priority} Priority
             </span>
+            <span
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                fontSize: "0.9rem",
+                fontWeight: "500",
+                backgroundColor: requisition.completedAt != null ? "#e8f5e9" : "#ffebee",
+                color: requisition.completedAt != null ? "#2e7d32" : "#c62828",
+              }}
+            >
+              {requisition.completedAt != null ? "Completed" : "Not Completed"}
+            </span>
           </div>
 
           {/* VEHICLE & CUSTOMER INFO */}
           <div className="modal-section">
             <h4>Vehicle & Customer Information</h4>
             <div className="info-grid">
+              <div>
+                <label>Branch ID</label>
+                <p>{requisition.branchId || "N/A"}</p>
+              </div>
               <div>
                 <label>Vehicle Number</label>
                 <p>{requisition.vehicleNo}</p>
@@ -428,12 +461,10 @@ function RequisitionModal({ requisition, onClose }) {
                 <label>Installation Finish Time</label>
                 <p>{formatDateTime(requisition.installationFinishTimeAssigned)}</p>
               </div>
-              {requisition.completedAt && (
-                <div>
-                  <label>Completed At</label>
-                  <p>{formatDateTime(requisition.completedAt)}</p>
-                </div>
-              )}
+              <div>
+                <label>Completed At</label>
+                <p>{requisition.completedAt != null ? formatDateTime(requisition.completedAt) : "Not Completed"}</p>
+              </div>
             </div>
           </div>
 
